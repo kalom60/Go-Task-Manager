@@ -7,7 +7,7 @@ func RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/todo", getTodos).Methods("GET")
 	r.HandleFunc("/todo/important", importantTodo).Methods("GET")
 	r.HandleFunc("/todo/completed", completedTodo).Methods("GET")
-	r.HandleFunc("/todo/now", incompletedTodo).Methods("GET")
+	r.HandleFunc("/todo/waiting", incompletedTodo).Methods("GET")
 	r.HandleFunc("/todo/{id}", getTodoByID).Methods("GET")
 	r.HandleFunc("/todo/{id}", updateTodo).Methods("PUT")
 	r.HandleFunc("/todo/{id}", updateTodoCompletion).Methods("PATCH")
