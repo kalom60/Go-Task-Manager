@@ -75,6 +75,7 @@ const Input: React.FC<Props> = ({ onFetchData, onToggleModal }) => {
                 name="todo"
                 value={todo.todo}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -87,6 +88,7 @@ const Input: React.FC<Props> = ({ onFetchData, onToggleModal }) => {
                 name="description"
                 value={todo.description}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -100,6 +102,7 @@ const Input: React.FC<Props> = ({ onFetchData, onToggleModal }) => {
                 name="date"
                 value={todo.date}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
