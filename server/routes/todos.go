@@ -184,3 +184,13 @@ func incompletedTodo(w http.ResponseWriter, r *http.Request) {
 
 	writeJSON(w, http.StatusOK, todos)
 }
+
+func todayTask(w http.ResponseWriter, r *http.Request) {
+	tasks, err := models.TodayTask()
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, "Failed to fetch today's tasks")
+		return
+	}
+
+	writeJSON(w, http.StatusOK, tasks)
+}
