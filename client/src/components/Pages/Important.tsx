@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Todo } from "../../App";
 import Todos from "../Todos";
+import AddButton from "../AddButton";
 
 const Important = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -22,6 +23,7 @@ const Important = () => {
   return (
     <div>
       <Todos data={todos} onFetchData={fetchData} />
+      <AddButton dataFetch={fetchData} />
     </div>
   );
 };
