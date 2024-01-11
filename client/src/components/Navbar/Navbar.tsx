@@ -1,26 +1,33 @@
 import { Home, List, CheckCircle, MinusCircle, Calendar } from "react-feather";
 import { NavLink } from "react-router-dom";
+import TaskLogo from "../../assets/booking-reservation-icon.png";
 import "../Custom-CSS.css";
+import { useState } from "react";
 
 const Navbar = () => {
+  const [isNavbarActive, setNavbarActive] = useState(false);
+
+  const toggleNavbar = () => {
+    setNavbarActive(!isNavbarActive);
+  };
+
   return (
-    <div className="box ml-6 mr-6">
+    <div className="box bx-container">
+      {/* use this className to make overlay
+      {`navbar-container${isNavbarActive ? " is-active" : ""}`} */}
       <nav className="navbar" role="navigation" aria-label="main navigation">
         <div className="navbar-brand mr-5">
-          <a className="navbar-item" href="#">
-            <img
-              src="https://bulma.io/images/bulma-logo.png"
-              width="112"
-              height="28"
-            />
+          <a className="navbar-item" href="/">
+            <img src={TaskLogo} alt="Task Logo" />
           </a>
 
           <a
             role="button"
-            className="navbar-burger"
+            className={`navbar-burger${isNavbarActive ? " is-active" : ""}`}
             aria-label="menu"
             aria-expanded="false"
             data-target="navbarBasicExample"
+            onClick={toggleNavbar}
           >
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
@@ -28,31 +35,45 @@ const Navbar = () => {
           </a>
         </div>
 
-        <div id="navbarBasicExample" className="navbar-menu">
+        <div
+          id="navbarBasicExample"
+          className={`navbar-menu${isNavbarActive ? " is-active" : ""}`}
+        >
           <div className="navbar-start">
-            <NavLink className="navbar-item is-active" to="/">
-              <Home size={18} style={{ marginRight: "10px" }} />{" "}
-              <p>All Todos</p>
+            <NavLink
+              className={`navbar-item${!isNavbarActive ? " is-active" : ""}`}
+              to="/"
+            >
+              <Home size={18} style={{ marginRight: "10px" }} /> All Todos
             </NavLink>
 
-            <NavLink className="navbar-item is-active" to="/important">
-              <List size={18} style={{ marginRight: "10px" }} />
-              <p>Important!</p>
+            <NavLink
+              className={`navbar-item${!isNavbarActive ? " is-active" : ""}`}
+              to="/important"
+            >
+              <List size={18} style={{ marginRight: "10px" }} /> Important!
             </NavLink>
 
-            <NavLink className="navbar-item is-active" to="/completed">
-              <CheckCircle size={18} style={{ marginRight: "10px" }} />
-              <p>Completed</p>
+            <NavLink
+              className={`navbar-item${!isNavbarActive ? " is-active" : ""}`}
+              to="/completed"
+            >
+              <CheckCircle size={18} style={{ marginRight: "10px" }} />{" "}
+              Completed
             </NavLink>
 
-            <NavLink className="navbar-item is-active" to="/waiting">
-              <MinusCircle size={18} style={{ marginRight: "10px" }} />
-              <p>Waiting</p>
+            <NavLink
+              className={`navbar-item${!isNavbarActive ? " is-active" : ""}`}
+              to="/waiting"
+            >
+              <MinusCircle size={18} style={{ marginRight: "10px" }} /> Waiting
             </NavLink>
 
-            <NavLink className="navbar-item is-active" to="/today">
-              <Calendar size={18} style={{ marginRight: "10px" }} />
-              <p>Today</p>
+            <NavLink
+              className={`navbar-item${!isNavbarActive ? " is-active" : ""}`}
+              to="/today"
+            >
+              <Calendar size={18} style={{ marginRight: "10px" }} /> Today
             </NavLink>
           </div>
 
