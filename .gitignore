@@ -11,3 +11,5 @@
 *.pdb
 *.pid
 *.so
+
+.DS_Store
