@@ -1,0 +1,51 @@
+.custom-hover-off:hover {
+  background-color: transparent !important;
+}
+
+#navbarBasicExample a.active {
+  border-bottom: 3px solid #00d1b2;
+}
+
+#submitBtn button:hover {
+  background-color: hsl(204, 86%, 53%);
+}
+
+.custom-box {
+  height: 240px;
+  min-width: 150px;
+  transition: all 0.3s ease;
+}
+
+.custom-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.15);
+}
+
+.box-margin {
+  margin-left: 10rem;
+  margin-right: 10rem;
+}
+
+
+.description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.circle {
+  width: 65px; 
+  height: 65px;
+  border-radius: 50%;
+  background-color: #fff;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.fixed-bottom-right {
+  position: fixed;
+  right: 50px;
+  bottom: 50px;
+}
