@@ -1,4 +1,4 @@
-import { Home, List, CheckCircle, Clock } from "react-feather";
+import { Home, List, CheckCircle, MinusCircle, Calendar } from "react-feather";
 import { NavLink } from "react-router-dom";
 import "../Custom-CSS.css";
 
@@ -45,9 +45,14 @@ const Navbar = () => {
               <p>Completed</p>
             </NavLink>
 
-            <NavLink className="navbar-item is-active" to="/now">
-              <Clock size={18} style={{ marginRight: "10px" }} />
-              <p>Do It Now</p>
+            <NavLink className="navbar-item is-active" to="/waiting">
+              <MinusCircle size={18} style={{ marginRight: "10px" }} />
+              <p>Waiting</p>
+            </NavLink>
+
+            <NavLink className="navbar-item is-active" to="/today">
+              <Calendar size={18} style={{ marginRight: "10px" }} />
+              <p>Today</p>
             </NavLink>
           </div>
 

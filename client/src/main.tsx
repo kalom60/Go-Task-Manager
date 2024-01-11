@@ -8,7 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./components/Navbar/Navbar.tsx";
 import Important from "./components/Pages/Important.tsx";
 import Completed from "./components/Pages/Completed.tsx";
-import Now from "./components/Pages/Now.tsx";
+import Wait from "./components/Pages/Wait.tsx";
+import Today from "./components/Pages/Today.tsx";
 
 const router = createBrowserRouter([
   {
@@ -43,11 +44,22 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/now",
+    path: "/waiting",
     element: (
       <>
         <Navbar />
-        <Now />
+        <Wait />
+        {/* ToastContainer */}
+        <ToastContainer position="bottom-left" />
+      </>
+    ),
+  },
+  {
+    path: "/today",
+    element: (
+      <>
+        <Navbar />
+        <Today />
         {/* ToastContainer */}
         <ToastContainer position="bottom-left" />
       </>
