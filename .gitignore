@@ -1,0 +1,13 @@
+# .gitignore
+**/.env
+**/node_modules
+**/tmp
+**/bin
+# Compiled Go binaries
+*.exe
+*.dll
+*.exe~
+*.dll~
+*.pdb
+*.pid
+*.so
