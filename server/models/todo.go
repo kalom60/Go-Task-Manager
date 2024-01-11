@@ -172,3 +172,28 @@ func InCompletedTodo() (*[]Todo, error) {
 
 	return &todos, nil
 }
+
+func TodayTask() (*[]Todo, error) {
+	coll := common.GetDBCollection("todo")
+
+	today := time.Now()
+	dateStr := today.Format("2006-01-02")
+
+	cursor, err := coll.Find(context.Background(), bson.M{"date": dateStr})
+	if err != nil {
+		return nil, err
+	}
+
+	tasks := make([]Todo, 0)
+	for cursor.Next(context.Background()) {
+		task := Todo{}
+		err := cursor.Decode(&task)
+		if err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, task)
+	}
+
+	return &tasks, nil
+}
