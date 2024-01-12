@@ -10,6 +10,7 @@ import Important from "./components/Pages/Important.tsx";
 import Completed from "./components/Pages/Completed.tsx";
 import Wait from "./components/Pages/Wait.tsx";
 import Today from "./components/Pages/Today.tsx";
+import SignUp from "./components/Auth/SignUp.tsx";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,14 @@ const router = createBrowserRouter([
       <>
         <Navbar />
         <App />
+      </>
+    ),
+  },
+  {
+    path: "/signup",
+    element: (
+      <>
+        <SignUp />
       </>
     ),
   },
