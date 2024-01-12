@@ -22,8 +22,13 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 	err = newUser.Save()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
-		return
+		if err.Error() == "Email address already in use." {
+			writeJSON(w, http.StatusBadRequest, "Email address already in use.")
+			return
+		} else {
+			writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+			return
+		}
 	}
 
 	writeJSON(w, http.StatusCreated, "User successfully created!")
