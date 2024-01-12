@@ -71,3 +71,25 @@
     margin: 0rem 3rem 0 3rem;
   }
 }
+
+.custom-sign-in-line {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.left-line,
+.right-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #ccc; /* Adjust the line color as needed */
+}
+
+.sign-in-text {
+  padding: 0 10px;
+}
+
+.custom-bordered-div {
+  border: 1px solid #ccc; /* Adjust border color and size as needed */
+  padding: 10px; /* Optional: Add padding for better visual appearance */
+}
