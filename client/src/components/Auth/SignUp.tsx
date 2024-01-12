@@ -1,8 +1,10 @@
 import { Mail, Lock, Check } from "react-feather";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Google from "../../assets/google.svg";
 import Github from "../../assets/github.svg";
 import Facebook from "../../assets/facebook.svg";
+import { ChangeEvent, useState } from "react";
+import { toast } from "react-toastify";
 
 const oAuths = [
   { text: "Google", comp: Google },
@@ -10,7 +12,52 @@ const oAuths = [
   { text: "Facebook", comp: Facebook },
 ];
 
+interface State {
+  email: string;
+  password: string;
+}
+
+const initialState: State = {
+  email: "",
+  password: "",
+};
+
 const SignUp = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<State>(initialState);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+
+    await fetch("http://localhost:8080/user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    })
+      .then(async (res: Response) => {
+        const data = await res.json();
+        if (res.ok) {
+          setUser(initialState);
+          //   toast.success(data.message);
+          navigate("/");
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch(() => {
+        toast.error("Failed to Sign Up");
+      });
+  };
+
   return (
     <div className="columns is-centered is-vcentered mt-6">
       <div className="column is-one-third box">
@@ -24,7 +71,7 @@ const SignUp = () => {
             Log In
           </NavLink>
         </div>
-        <form className="container m-auto">
+        <form className="container m-auto" onSubmit={handleSubmit}>
           <div className="fields mx-6">
             <div className="field">
               <p className="control has-icons-left has-icons-right">
@@ -32,6 +79,9 @@ const SignUp = () => {
                   className="input"
                   type="email"
                   placeholder="Email"
+                  name="email"
+                  value={user.email}
+                  onChange={handleChange}
                   required
                 />
                 <span className="icon is-small is-left">
@@ -48,6 +98,9 @@ const SignUp = () => {
                   className="input"
                   type="password"
                   placeholder="Password"
+                  name="password"
+                  value={user.password}
+                  onChange={handleChange}
                   required
                 />
                 <span className="icon is-small is-left">
