@@ -35,30 +35,30 @@ func createTodo(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&newTodo)
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Could not parse the request data.")
+		writeJSON(w, http.StatusBadRequest, "Invalid request format. Please check your input and try again.")
 		return
 	}
 
 	defer r.Body.Close()
 
-	if newTodo.Todo == "" {
-		writeJSON(w, http.StatusBadRequest, "Todo could not be empty.")
-		return
-	}
+	// if newTodo.Todo == "" {
+	// 	writeJSON(w, http.StatusBadRequest, "Todo could not be empty.")
+	// 	return
+	// }
 
 	err = newTodo.Save()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Failed to create todo.")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, "Todo created successfully!")
+	writeJSON(w, http.StatusCreated, "Task successfully created!")
 }
 
 func getTodos(w http.ResponseWriter, r *http.Request) {
 	todos, err := models.GetTodos()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Failed to fetch todos.")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 
@@ -69,13 +69,13 @@ func getTodoByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	objId, err := primitive.ObjectIDFromHex(vars["id"])
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Could not parse todo id.")
+		writeJSON(w, http.StatusBadRequest, "Invalid Task ID.")
 		return
 	}
 
 	todo, err := models.GetTodoByID(objId)
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Failed to fetch todo.")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 
@@ -86,14 +86,14 @@ func updateTodo(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	objId, err := primitive.ObjectIDFromHex(vars["id"])
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Could not parse todo id.")
+		writeJSON(w, http.StatusBadRequest, "Invalid Task ID.")
 		return
 	}
 
 	var updatedTodo models.Todo
 	err = json.NewDecoder(r.Body).Decode(&updatedTodo)
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Could not parse request data.")
+		writeJSON(w, http.StatusBadRequest, "Invalid request format. Please check your input and try again.")
 		return
 	}
 
@@ -102,18 +102,18 @@ func updateTodo(w http.ResponseWriter, r *http.Request) {
 	updatedTodo.ID = objId
 	err = updatedTodo.UpdateTodo()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Failed to update todo.")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, "Todo updated successfully!")
+	writeJSON(w, http.StatusOK, "Task successfully updated!")
 }
 
 func updateTodoCompletion(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	objId, err := primitive.ObjectIDFromHex(vars["id"])
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Could not parse todo id.")
+		writeJSON(w, http.StatusBadRequest, "Invalid Task ID.")
 		return
 	}
 
@@ -123,7 +123,7 @@ func updateTodoCompletion(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Could not parse request data.")
+		writeJSON(w, http.StatusBadRequest, "Invalid request format.")
 		return
 	}
 
@@ -131,34 +131,34 @@ func updateTodoCompletion(w http.ResponseWriter, r *http.Request) {
 
 	err = models.UpdateComplete(objId, body.Completed)
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Failed to update todo.")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, "Todo updated successfully!")
+	writeJSON(w, http.StatusOK, "Task successfully updated!")
 }
 
 func deleteTodo(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	objId, err := primitive.ObjectIDFromHex(vars["id"])
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Could not parse todo id.")
+		writeJSON(w, http.StatusBadRequest, "Invalid Task ID.")
 		return
 	}
 
 	err = models.DeleteTodo(objId)
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Failed to delete todo.")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, "Todo deleted successfully!")
+	writeJSON(w, http.StatusOK, "Task successfully deleted!")
 }
 
 func importantTodo(w http.ResponseWriter, r *http.Request) {
 	todos, err := models.ImportantTodo()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Failed to fetch important todos")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 
@@ -168,7 +168,7 @@ func importantTodo(w http.ResponseWriter, r *http.Request) {
 func completedTodo(w http.ResponseWriter, r *http.Request) {
 	todos, err := models.CompletedTodo()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Failed to fetch completed todos")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 
@@ -178,7 +178,7 @@ func completedTodo(w http.ResponseWriter, r *http.Request) {
 func incompletedTodo(w http.ResponseWriter, r *http.Request) {
 	todos, err := models.InCompletedTodo()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Failed to fetch incompleted todos")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 
@@ -188,7 +188,7 @@ func incompletedTodo(w http.ResponseWriter, r *http.Request) {
 func todayTask(w http.ResponseWriter, r *http.Request) {
 	tasks, err := models.TodayTask()
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Failed to fetch today's tasks")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 

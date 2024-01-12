@@ -14,7 +14,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&newUser)
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Could not parse request data")
+		writeJSON(w, http.StatusBadRequest, "Invalid request format. Please check your input and try again.")
 		return
 	}
 
@@ -22,9 +22,9 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 	err = newUser.Save()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Failed to create user")
+		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, "User created successfully!")
+	writeJSON(w, http.StatusCreated, "User successfully created!")
 }
