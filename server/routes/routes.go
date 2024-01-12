@@ -13,4 +13,6 @@ func RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/todo/{id}", updateTodo).Methods("PUT")
 	r.HandleFunc("/todo/{id}", updateTodoCompletion).Methods("PATCH")
 	r.HandleFunc("/todo/{id}", deleteTodo).Methods("DELETE")
+
+	r.HandleFunc("/user", createUser).Methods("POST")
 }
