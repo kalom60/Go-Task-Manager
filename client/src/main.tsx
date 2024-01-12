@@ -27,6 +27,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <SignUp />
+        <ToastContainer position="top-center" autoClose={3000} />
       </>
     ),
   },
@@ -37,7 +38,7 @@ const router = createBrowserRouter([
         <Navbar />
         <Important />
         {/* ToastContainer */}
-        <ToastContainer position="bottom-left" />
+        <ToastContainer position="top-center" autoClose={3000} />
       </>
     ),
   },
@@ -48,7 +49,7 @@ const router = createBrowserRouter([
         <Navbar />
         <Completed />
         {/* ToastContainer */}
-        <ToastContainer position="bottom-left" />
+        <ToastContainer position="top-center" autoClose={3000} />
       </>
     ),
   },
@@ -59,7 +60,7 @@ const router = createBrowserRouter([
         <Navbar />
         <Wait />
         {/* ToastContainer */}
-        <ToastContainer position="bottom-left" />
+        <ToastContainer position="top-center" autoClose={3000} />
       </>
     ),
   },
@@ -70,7 +71,7 @@ const router = createBrowserRouter([
         <Navbar />
         <Today />
         {/* ToastContainer */}
-        <ToastContainer position="bottom-left" />
+        <ToastContainer position="top-center" autoClose={3000} />
       </>
     ),
   },

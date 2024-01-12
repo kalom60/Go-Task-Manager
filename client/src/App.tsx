@@ -1,6 +1,6 @@
 import "./App.css";
 // import Input from "./components/Input";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Todos from "./components/Todos";
 import { useEffect, useState } from "react";
@@ -21,11 +21,15 @@ function App() {
   const fetchData = async () => {
     try {
       await fetch("http://localhost:8080/todo").then(async (res) => {
-        const data: Todo[] = await res.json();
-        setTodos(data);
+        const data: Todo[] | { message: string } = await res.json();
+        if (Array.isArray(data)) {
+          setTodos(data);
+        } else {
+          toast.error(data.message);
+        }
       });
     } catch (error) {
-      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch tasks");
     }
   };
 
@@ -38,7 +42,7 @@ function App() {
       {/* <Input onFetchData={fetchData} /> */}
       <Todos data={todos} onFetchData={fetchData} />
       <AddButton dataFetch={fetchData} />
-      <ToastContainer position="bottom-left" />
+      <ToastContainer position="top-center" autoClose={3000} />
     </>
   );
 }

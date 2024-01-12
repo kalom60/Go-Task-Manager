@@ -56,13 +56,21 @@ const EditTodo: React.FC<Props> = ({ data, onFetchData, onToggleModal }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(todo),
-    }).then(async (res) => {
-      const data = await res.json();
-      setTodo(intialState);
-      onFetchData();
-      onToggleModal();
-      toast(data.message);
-    });
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (res.ok) {
+          setTodo(intialState);
+          onFetchData();
+          onToggleModal();
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch(() => {
+        toast.error("Failed to edit task");
+      });
   };
 
   return (

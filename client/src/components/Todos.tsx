@@ -29,11 +29,19 @@ const Todos: React.FC<Props> = ({ data, onFetchData }) => {
     event?.stopPropagation();
     await fetch(`http://localhost:8080/todo/${id}`, {
       method: "DELETE",
-    }).then(async (res) => {
-      const data = await res.json();
-      onFetchData();
-      toast(data.message);
-    });
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (res.ok) {
+          onFetchData();
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch(() => {
+        toast.error("Failed to delete task");
+      });
   };
 
   const handleComplete = async (
