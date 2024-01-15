@@ -36,3 +36,21 @@ func (u *User) Save() error {
 	}
 	return nil
 }
+
+func Login(email, password string) (string, error) {
+	coll := common.GetDBCollection("user")
+
+	var existingUser User
+	err := coll.FindOne(context.Background(), bson.M{"email": email}).Decode(&existingUser)
+	if err == mongo.ErrNoDocuments {
+		return "", errors.New("User doesn't exist.")
+	} else if err != nil {
+		return "", err
+	}
+
+	if existingUser.Password != password {
+		return "", errors.New("User doesn't exist.")
+	}
+
+	return existingUser.ID.Hex(), nil
+}
