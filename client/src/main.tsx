@@ -11,6 +11,7 @@ import Completed from "./components/Pages/Completed.tsx";
 import Wait from "./components/Pages/Wait.tsx";
 import Today from "./components/Pages/Today.tsx";
 import SignUp from "./components/Auth/SignUp.tsx";
+import SignIn from "./components/Auth/SignIn.tsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,15 @@ const router = createBrowserRouter([
     element: (
       <>
         <SignUp />
+        <ToastContainer position="top-center" autoClose={3000} />
+      </>
+    ),
+  },
+  {
+    path: "/signin",
+    element: (
+      <>
+        <SignIn />
         <ToastContainer position="top-center" autoClose={3000} />
       </>
     ),
