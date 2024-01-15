@@ -37,7 +37,7 @@ const SignIn = () => {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    await fetch("http://localhost:8080/login", {
+    await fetch("http://localhost:8080/signin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -55,7 +55,7 @@ const SignIn = () => {
         }
       })
       .catch(() => {
-        toast.error("Failed to Sign In.");
+        toast.error("Failed to Sign in.");
       });
   };
 
