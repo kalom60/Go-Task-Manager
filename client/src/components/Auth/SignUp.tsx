@@ -38,7 +38,7 @@ const SignUp = () => {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    await fetch("http://localhost:8080/user", {
+    await fetch("http://localhost:8080/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
