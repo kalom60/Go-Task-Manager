@@ -1,4 +1,4 @@
-import { Mail, Lock, Check } from "react-feather";
+import { Mail, Lock, Check, User } from "react-feather";
 import { NavLink, useNavigate } from "react-router-dom";
 import Google from "../../assets/google.svg";
 import Github from "../../assets/github.svg";
@@ -13,11 +13,13 @@ const oAuths = [
 ];
 
 interface State {
+  username: string;
   email: string;
   password: string;
 }
 
 const initialState: State = {
+  username: "",
   email: "",
   password: "",
 };
@@ -73,6 +75,25 @@ const SignUp = () => {
         </div>
         <form className="container m-auto" onSubmit={handleSubmit}>
           <div className="fields mx-6">
+            <div className="field">
+              <p className="control has-icons-left has-icons-right">
+                <input
+                  className="input"
+                  type="text"
+                  placeholder="Username"
+                  name="username"
+                  value={user.username}
+                  onChange={handleChange}
+                  required
+                />
+                <span className="icon is-small is-left">
+                  <User size={16} />
+                </span>
+                {/* <span className="icon is-small is-right">
+                  <Check size={16} />
+                </span> */}
+              </p>
+            </div>
             <div className="field">
               <p className="control has-icons-left has-icons-right">
                 <input
