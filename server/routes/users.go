@@ -53,7 +53,7 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 	userID, err := models.Login(userData.Email, userData.Password)
 	if err != nil {
 		if err.Error() == "User doesn't exist." {
-			writeJSON(w, http.StatusInternalServerError, "Invalid email or password. Please check your credentials and try again.")
+			writeJSON(w, http.StatusInternalServerError, "Invalid email or password.")
 			return
 		} else {
 			writeJSON(w, http.StatusInternalServerError, "Failed to login. Please try again later.")

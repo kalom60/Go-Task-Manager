@@ -56,7 +56,8 @@ func Login(email, password string) (string, error) {
 		return "", err
 	}
 
-	if existingUser.Password != password {
+	isPasswordValid := utils.CheckPasswordHash(password, existingUser.Password)
+	if !isPasswordValid {
 		return "", errors.New("User doesn't exist.")
 	}
 
