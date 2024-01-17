@@ -10,11 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func writeJSON(w http.ResponseWriter, status int, v any) {
+func writeJSON(w http.ResponseWriter, status int, key string, v any) {
 	switch v.(type) {
 	case string:
 		message := map[string]interface{}{
-			"message": v,
+			key: v,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(status)
@@ -35,7 +35,7 @@ func createTodo(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&newTodo)
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Invalid request format. Please check your input and try again.")
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid request format. Please check your input and try again.")
 		return
 	}
 
@@ -48,52 +48,52 @@ func createTodo(w http.ResponseWriter, r *http.Request) {
 
 	err = newTodo.Save()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, "Task successfully created!")
+	writeJSON(w, http.StatusCreated, "message", "Task successfully created!")
 }
 
 func getTodos(w http.ResponseWriter, r *http.Request) {
 	todos, err := models.GetTodos()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, &todos)
+	writeJSON(w, http.StatusOK, "", &todos)
 }
 
 func getTodoByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	objId, err := primitive.ObjectIDFromHex(vars["id"])
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Invalid Task ID.")
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid Task ID.")
 		return
 	}
 
 	todo, err := models.GetTodoByID(objId)
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, &todo)
+	writeJSON(w, http.StatusOK, "", &todo)
 }
 
 func updateTodo(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	objId, err := primitive.ObjectIDFromHex(vars["id"])
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Invalid Task ID.")
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid Task ID.")
 		return
 	}
 
 	var updatedTodo models.Todo
 	err = json.NewDecoder(r.Body).Decode(&updatedTodo)
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Invalid request format. Please check your input and try again.")
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid request format. Please check your input and try again.")
 		return
 	}
 
@@ -102,18 +102,18 @@ func updateTodo(w http.ResponseWriter, r *http.Request) {
 	updatedTodo.ID = objId
 	err = updatedTodo.UpdateTodo()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, "Task successfully updated!")
+	writeJSON(w, http.StatusOK, "message", "Task successfully updated!")
 }
 
 func updateTodoCompletion(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	objId, err := primitive.ObjectIDFromHex(vars["id"])
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Invalid Task ID.")
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid Task ID.")
 		return
 	}
 
@@ -123,7 +123,7 @@ func updateTodoCompletion(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Invalid request format.")
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid request format.")
 		return
 	}
 
@@ -131,66 +131,66 @@ func updateTodoCompletion(w http.ResponseWriter, r *http.Request) {
 
 	err = models.UpdateComplete(objId, body.Completed)
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, "Task successfully updated!")
+	writeJSON(w, http.StatusOK, "message", "Task successfully updated!")
 }
 
 func deleteTodo(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	objId, err := primitive.ObjectIDFromHex(vars["id"])
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Invalid Task ID.")
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid Task ID.")
 		return
 	}
 
 	err = models.DeleteTodo(objId)
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, "Task successfully deleted!")
+	writeJSON(w, http.StatusOK, "message", "Task successfully deleted!")
 }
 
 func importantTodo(w http.ResponseWriter, r *http.Request) {
 	todos, err := models.ImportantTodo()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, todos)
+	writeJSON(w, http.StatusOK, "", &todos)
 }
 
 func completedTodo(w http.ResponseWriter, r *http.Request) {
 	todos, err := models.CompletedTodo()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, todos)
+	writeJSON(w, http.StatusOK, "", &todos)
 }
 
 func incompletedTodo(w http.ResponseWriter, r *http.Request) {
 	todos, err := models.InCompletedTodo()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, todos)
+	writeJSON(w, http.StatusOK, "", &todos)
 }
 
 func todayTask(w http.ResponseWriter, r *http.Request) {
 	tasks, err := models.TodayTask()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, tasks)
+	writeJSON(w, http.StatusOK, "", &tasks)
 }
