@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 	"todo-manager/common"
+	"todo-manager/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -29,6 +30,13 @@ func (u *User) Save() error {
 	} else if err != mongo.ErrNoDocuments {
 		return err
 	}
+
+	hashedPassword, err := utils.HashPassword(u.Password)
+	if err != nil {
+		return err
+	}
+
+	u.Password = hashedPassword
 
 	_, err = coll.InsertOne(context.Background(), u)
 	if err != nil {
