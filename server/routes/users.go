@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 	"todo-manager/models"
+	"todo-manager/utils"
 )
 
 func createUser(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +15,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&newUser)
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Invalid request format. Please check your input and try again.")
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid request format. Please check your input and try again.")
 		return
 	}
 
@@ -23,15 +24,21 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	err = newUser.Save()
 	if err != nil {
 		if err.Error() == "Email address already in use." {
-			writeJSON(w, http.StatusBadRequest, "Email address already in use.")
+			writeJSON(w, http.StatusBadRequest, "message", "Email address already in use.")
 			return
 		} else {
-			writeJSON(w, http.StatusInternalServerError, "Something went wrong. Please try again later.")
+			writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 			return
 		}
 	}
 
-	writeJSON(w, http.StatusCreated, "User successfully created!")
+	token, err := utils.GenerateToken(newUser.Email, newUser.ID.String())
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, "message", "Failed to login. Please try again later.")
+		return
+	}
+
+	writeJSON(w, http.StatusCreated, "token", token)
 }
 
 type Login struct {
@@ -44,7 +51,7 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&userData)
 	if err != nil {
-		writeJSON(w, http.StatusBadRequest, "Invalid request format. Please check your input and try again.")
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid request format. Please check your input and try again.")
 		return
 	}
 
@@ -53,13 +60,19 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 	userID, err := models.Login(userData.Email, userData.Password)
 	if err != nil {
 		if err.Error() == "User doesn't exist." {
-			writeJSON(w, http.StatusInternalServerError, "Invalid email or password.")
+			writeJSON(w, http.StatusInternalServerError, "message", "Invalid email or password.")
 			return
 		} else {
-			writeJSON(w, http.StatusInternalServerError, "Failed to login. Please try again later.")
+			writeJSON(w, http.StatusInternalServerError, "message", "Failed to login. Please try again later.")
 			return
 		}
 	}
 
-	writeJSON(w, http.StatusOK, userID)
+	token, err := utils.GenerateToken(userData.Email, userID)
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, "message", "Failed to login. Please try again later.")
+		return
+	}
+
+	writeJSON(w, http.StatusOK, "token", token)
 }
