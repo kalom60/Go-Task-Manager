@@ -12,6 +12,7 @@ import (
 
 type Todo struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	UserID      primitive.ObjectID `bson:"userId"`
 	Todo        string             `bson:"todo"`
 	Description string             `bson:"description"`
 	Date        string             `bson:"date"`
