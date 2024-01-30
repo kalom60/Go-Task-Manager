@@ -15,15 +15,6 @@ import SignIn from "./components/Auth/SignIn.tsx";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: (
-      <>
-        <Navbar />
-        <App />
-      </>
-    ),
-  },
-  {
     path: "/signup",
     element: (
       <>
@@ -38,6 +29,15 @@ const router = createBrowserRouter([
       <>
         <SignIn />
         <ToastContainer position="top-center" autoClose={3000} />
+      </>
+    ),
+  },
+  {
+    path: "/",
+    element: (
+      <>
+        <Navbar />
+        <App />
       </>
     ),
   },
