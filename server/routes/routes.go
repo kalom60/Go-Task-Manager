@@ -1,19 +1,33 @@
 package routes
 
-import "github.com/gorilla/mux"
+import (
+	"net/http"
+	"todo-manager/middlewares"
+
+	"github.com/gorilla/mux"
+)
 
 func RegisterRoutes(r *mux.Router) {
-	r.HandleFunc("/todo", createTodo).Methods("POST")
-	r.HandleFunc("/todo", getTodos).Methods("GET")
-	r.HandleFunc("/todo/important", importantTodo).Methods("GET")
-	r.HandleFunc("/todo/completed", completedTodo).Methods("GET")
-	r.HandleFunc("/todo/waiting", incompletedTodo).Methods("GET")
-	r.HandleFunc("/todo/today", todayTask).Methods("GET")
-	r.HandleFunc("/todo/{id}", getTodoByID).Methods("GET")
-	r.HandleFunc("/todo/{id}", updateTodo).Methods("PUT")
-	r.HandleFunc("/todo/{id}", updateTodoCompletion).Methods("PATCH")
-	r.HandleFunc("/todo/{id}", deleteTodo).Methods("DELETE")
-
+	// routes without middleware
 	r.HandleFunc("/signup", createUser).Methods("POST")
 	r.HandleFunc("/signin", logIn).Methods("POST")
+	r.Handle("/refreshToken", middlewares.AuthenticateRefreshToken(http.HandlerFunc(refreshToken))).Methods("POST")
+
+	// create a subrouter
+	s := r.PathPrefix("/todo").Subrouter()
+
+	// apply the middleware to the subrouter
+	s.Use(middlewares.Authenticate)
+
+	// routes with middleware
+	s.HandleFunc("", createTodo).Methods("POST")
+	s.HandleFunc("", getTodos).Methods("GET")
+	s.HandleFunc("/important", importantTodo).Methods("GET")
+	s.HandleFunc("/completed", completedTodo).Methods("GET")
+	s.HandleFunc("/waiting", incompletedTodo).Methods("GET")
+	s.HandleFunc("/today", todayTask).Methods("GET")
+	s.HandleFunc("/{id}", getTodoByID).Methods("GET")
+	s.HandleFunc("/{id}", updateTodo).Methods("PUT")
+	s.HandleFunc("/{id}", updateTodoCompletion).Methods("PATCH")
+	s.HandleFunc("/{id}", deleteTodo).Methods("DELETE")
 }
