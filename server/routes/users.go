@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+	"todo-manager/middlewares"
 	"todo-manager/models"
 	"todo-manager/utils"
 )
@@ -76,13 +77,13 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	token, err := utils.GenerateToken(userData.Email, userID, time.Now().Add(time.Minute+15))
+	token, err := utils.GenerateToken(userData.Email, userID, time.Now().Add(time.Minute*15))
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, "message", "Failed to login. Please try again later.")
 		return
 	}
 
-	refresh_token, err := utils.GenerateToken(userData.Email, userID, time.Now().Add(time.Hour+24))
+	refresh_token, err := utils.GenerateToken(userData.Email, userID, time.Now().Add(time.Hour*24))
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, "message", "Failed to login. Please try again later.")
 		return
@@ -93,4 +94,24 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, "token", token)
 }
 
-func refreshToken(w http.ResponseWriter, r *http.Request) {}
+func refreshToken(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(middlewares.UserIDKey).(string)
+	if !ok {
+		writeJSON(w, http.StatusUnauthorized, "message", "Please login.")
+		return
+	}
+
+	email, ok := r.Context().Value(middlewares.UserEmailKey).(string)
+	if !ok {
+		writeJSON(w, http.StatusUnauthorized, "message", "Please login.")
+		return
+	}
+
+	token, err := utils.GenerateToken(email, userID, time.Now().Add(time.Minute+15))
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, "message", "Failed to login. Please try again later.")
+		return
+	}
+
+	writeJSON(w, http.StatusOK, "token", token)
+}
