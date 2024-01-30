@@ -20,7 +20,7 @@ func GenerateToken(email, userID string, expiration time.Time) (string, error) {
 	return token.SignedString([]byte(secretKey))
 }
 
-func VerifyToken(token string) (string, error) {
+func VerifyToken(token string) (string, string, error) {
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("Unexpected signing method.")
@@ -30,28 +30,32 @@ func VerifyToken(token string) (string, error) {
 	})
 
 	if err != nil {
-		return "", errors.New("Could not parse token.")
+		// token expired also falls here
+		if err.Error() == "token has invalid claims: token is expired" {
+			return "", "", errors.New("Token is expired.")
+		}
+		return "", "", errors.New("Could not parse token.")
 	}
 
 	tokenIsValid := parsedToken.Valid
 	if !tokenIsValid {
-		return "", errors.New("Invalid token.")
+		return "", "", errors.New("Invalid token.")
 	}
 
 	claims, ok := parsedToken.Claims.(jwt.MapClaims)
 	if !ok {
-		return "", errors.New("Invalid token claims.")
+		return "", "", errors.New("Invalid token claims.")
 	}
 
-	if exp, ok := claims["exp"].(float64); ok {
-		if time.Unix(int64(exp), 0).Before(time.Now()) {
-			return "", errors.New("Token is expired.")
-		}
-	} else {
-		return "", errors.New("Invalid token expiration.")
-	}
+	// if exp, ok := claims["exp"].(float64); ok {
+	// 	if time.Unix(int64(exp), 0).Before(time.Now()) {
+	// 		return "", "", errors.New("Token is expired.")
+	// 	}
+	// } else {
+	// 	return "", "", errors.New("Invalid token expiration.")
+	// }
 
-	// email := claims["email"].(string)
+	email := claims["email"].(string)
 	userID := claims["userID"].(string)
-	return userID, nil
+	return userID, email, nil
 }
