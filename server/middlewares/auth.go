@@ -8,6 +8,11 @@ import (
 	"todo-manager/utils"
 )
 
+type keyType string
+
+const UserIDKey keyType = "userID"
+const UserEmailKey keyType = "email"
+
 func writeJSON(w http.ResponseWriter, status int, key string, v any) {
 	switch v.(type) {
 	case string:
@@ -33,7 +38,7 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		userID, err := utils.VerifyToken(token)
+		userID, email, err := utils.VerifyToken(token)
 		if err != nil {
 			if err.Error() == "Token is expired." {
 				writeJSON(w, http.StatusUnauthorized, "message", "Expired token")
@@ -44,12 +49,9 @@ func Authenticate(next http.Handler) http.Handler {
 			}
 		}
 
-		type keyType string
+		ctx := context.WithValue(r.Context(), UserIDKey, userID)
+		ctx = context.WithValue(ctx, UserEmailKey, email)
 
-		const userIDKey keyType = "userID"
-		ctx := context.WithValue(r.Context(), userIDKey, userID)
-
-		// ctx := context.WithValue(r.Context(), "userID", userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -67,18 +69,20 @@ func AuthenticateRefreshToken(next http.Handler) http.Handler {
 		}
 
 		token := c.Value
-		userID, err := utils.VerifyToken(token)
+		userID, email, err := utils.VerifyToken(token)
 		if err != nil {
-			writeJSON(w, http.StatusUnauthorized, "message", "Please login.")
-			return
+			if err.Error() == "Token is expired." {
+				writeJSON(w, http.StatusUnauthorized, "message", "Expired token")
+				return
+			} else {
+				writeJSON(w, http.StatusUnauthorized, "message", "Invalid or expired token. Please authenticate again.")
+				return
+			}
 		}
 
-		type keyType string
+		ctx := context.WithValue(r.Context(), UserIDKey, userID)
+		ctx = context.WithValue(ctx, UserEmailKey, email)
 
-		const userIDKey keyType = "userID"
-		ctx := context.WithValue(r.Context(), userIDKey, userID)
-
-		// ctx := context.WithValue(r.Context(), "userID", userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
