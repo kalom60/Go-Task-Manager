@@ -1,7 +1,5 @@
 import React from "react";
 import TodoLogo from "../assets/check copy.png";
-// import List from "../assets/list.png";
-// import TODO from "../assets/to-do-list copy.png";
 
 const EmptyTodo: React.FC = () => {
   return (
