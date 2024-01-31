@@ -1,3 +1,4 @@
+// main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
@@ -10,85 +11,82 @@ import Important from "./components/Pages/Important.tsx";
 import Completed from "./components/Pages/Completed.tsx";
 import Wait from "./components/Pages/Wait.tsx";
 import Today from "./components/Pages/Today.tsx";
-import SignUp from "./components/Auth/SignUp.tsx";
-import SignIn from "./components/Auth/SignIn.tsx";
+import SignUp from "./components/Pages/SignUp.tsx";
+import SignIn from "./components/Pages/SignIn.tsx";
+import { PrivateRoute } from "./auth/PrivateRoute.tsx";
+import AuthProvider from "./store/AuthProvider.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/signup",
-    element: (
-      <>
-        <SignUp />
-        <ToastContainer position="top-center" autoClose={3000} />
-      </>
-    ),
+    element: <SignUp />,
   },
   {
     path: "/signin",
-    element: (
-      <>
-        <SignIn />
-        <ToastContainer position="top-center" autoClose={3000} />
-      </>
-    ),
+    element: <SignIn />,
   },
   {
     path: "/",
     element: (
-      <>
-        <Navbar />
-        <App />
-      </>
+      <PrivateRoute>
+        <>
+          <Navbar />
+          <App />
+        </>
+      </PrivateRoute>
     ),
   },
   {
     path: "/important",
     element: (
-      <>
-        <Navbar />
-        <Important />
-        {/* ToastContainer */}
-        <ToastContainer position="top-center" autoClose={3000} />
-      </>
+      <PrivateRoute>
+        <>
+          <Navbar />
+          <Important />
+        </>
+      </PrivateRoute>
     ),
   },
   {
     path: "/completed",
     element: (
-      <>
-        <Navbar />
-        <Completed />
-        {/* ToastContainer */}
-        <ToastContainer position="top-center" autoClose={3000} />
-      </>
+      <PrivateRoute>
+        <>
+          <Navbar />
+          <Completed />
+        </>
+      </PrivateRoute>
     ),
   },
   {
     path: "/waiting",
     element: (
-      <>
-        <Navbar />
-        <Wait />
-        {/* ToastContainer */}
-        <ToastContainer position="top-center" autoClose={3000} />
-      </>
+      <PrivateRoute>
+        <>
+          <Navbar />
+          <Wait />
+        </>
+      </PrivateRoute>
     ),
   },
   {
     path: "/today",
     element: (
-      <>
-        <Navbar />
-        <Today />
-        {/* ToastContainer */}
-        <ToastContainer position="top-center" autoClose={3000} />
-      </>
+      <PrivateRoute>
+        <>
+          <Navbar />
+          <Today />
+        </>
+      </PrivateRoute>
     ),
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+      <ToastContainer position="top-center" autoClose={3000} />
+    </AuthProvider>
   </React.StrictMode>
 );
