@@ -6,6 +6,7 @@ import Facebook from "../../assets/facebook.svg";
 import { ChangeEvent, useState } from "react";
 import { toast } from "react-toastify";
 import "../Custom-CSS.css";
+import { useAuth } from "../../hooks/useAuth";
 
 const oAuths = [
   { text: "Google", comp: Google },
@@ -25,6 +26,7 @@ const initialState: State = {
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
   const [user, setUser] = useState<State>(initialState);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +50,8 @@ const SignIn = () => {
         const data = await res.json();
         if (res.ok) {
           setUser(initialState);
-          //   toast.success(data.message);
+          localStorage.setItem("access", data.token);
+          auth.login();
           navigate("/");
         } else {
           toast.error(data.message);
