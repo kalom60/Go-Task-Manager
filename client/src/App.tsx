@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Todos from "./components/Todos";
 import { useEffect, useState } from "react";
 import AddButton from "./components/AddButton";
+import EmptyTodo from "./components/EmptyTodo";
 
 export interface Todo {
   ID: number;
@@ -40,6 +41,16 @@ function App() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  if (todos.length === 0) {
+    return (
+      <>
+        <EmptyTodo />
+        <AddButton dataFetch={fetchData} />
+        <ToastContainer position="top-center" autoClose={3000} />
+      </>
+    );
+  }
 
   return (
     <>
