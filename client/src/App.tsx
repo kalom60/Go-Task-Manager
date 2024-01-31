@@ -20,7 +20,11 @@ function App() {
 
   const fetchData = async () => {
     try {
-      await fetch("http://localhost:8080/todo").then(async (res) => {
+      await fetch("http://localhost:8080/todo", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access")}`,
+        },
+      }).then(async (res) => {
         const data: Todo[] | { message: string } = await res.json();
         if (Array.isArray(data)) {
           setTodos(data);
