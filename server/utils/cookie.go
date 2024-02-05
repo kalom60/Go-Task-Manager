@@ -6,7 +6,7 @@ import (
 )
 
 func SetCookie(w http.ResponseWriter, name, value string, expiration time.Time) {
-	cookie := buildCookie(name, value, expiration.Second())
+	cookie := buildCookie(name, value, int(time.Until(expiration).Seconds()))
 	http.SetCookie(w, cookie)
 }
 
@@ -16,14 +16,13 @@ func ClearCookie(w http.ResponseWriter, name string) {
 }
 
 func buildCookie(name, value string, expires int) *http.Cookie {
-	cookie := &http.Cookie{
+	cookie := http.Cookie{
 		Name:     name,
 		Value:    value,
 		Path:     "/",
+		MaxAge:   expires,
 		HttpOnly: true,
-		// Secure:   true,
-		MaxAge: expires,
 	}
 
-	return cookie
+	return &cookie
 }
