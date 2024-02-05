@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+	"todo-manager/middlewares"
 	"todo-manager/models"
 
 	"github.com/gorilla/mux"
@@ -27,13 +28,25 @@ func writeJSON(w http.ResponseWriter, status int, key string, v any) {
 }
 
 func createTodo(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(middlewares.UserIDKey).(string)
+	if !ok {
+		writeJSON(w, http.StatusUnauthorized, "meesage", "Please login.")
+		return
+	}
+
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid User ID.")
+	}
+
 	var newTodo models.Todo
 
 	// Set default values before decoding the request body
 	newTodo.Completed = false
 	newTodo.CreatedAt = time.Now()
+	newTodo.UserID = userObjID
 
-	err := json.NewDecoder(r.Body).Decode(&newTodo)
+	err = json.NewDecoder(r.Body).Decode(&newTodo)
 	if err != nil {
 		writeJSON(w, http.StatusBadRequest, "message", "Invalid request format. Please check your input and try again.")
 		return
@@ -56,7 +69,18 @@ func createTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTodos(w http.ResponseWriter, r *http.Request) {
-	todos, err := models.GetTodos()
+	userID, ok := r.Context().Value(middlewares.UserIDKey).(string)
+	if !ok {
+		writeJSON(w, http.StatusUnauthorized, "meesage", "Please login.")
+		return
+	}
+
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid User ID.")
+	}
+
+	todos, err := models.GetTodos(userObjID)
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
