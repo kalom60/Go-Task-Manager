@@ -32,11 +32,11 @@ func (t *Todo) Save() error {
 	return nil
 }
 
-func GetTodos() (*[]Todo, error) {
+func GetTodos(userID primitive.ObjectID) (*[]Todo, error) {
 	coll := common.GetDBCollection("todo")
 
 	toods := make([]Todo, 0)
-	cursor, err := coll.Find(context.Background(), bson.M{})
+	cursor, err := coll.Find(context.Background(), bson.M{"userId": userID})
 	if err != nil {
 		return nil, err
 	}
