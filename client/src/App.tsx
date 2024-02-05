@@ -6,6 +6,8 @@ import Todos from "./components/Todos";
 import { useEffect, useState } from "react";
 import AddButton from "./components/AddButton";
 import EmptyTodo from "./components/EmptyTodo";
+import { get, refreshToken } from "./service/api";
+import { Navigate, useLocation } from "react-router-dom";
 
 export interface Todo {
   ID: number;
@@ -17,6 +19,8 @@ export interface Todo {
 }
 
 function App() {
+  const location = useLocation();
+  const [shouldNavigate, setShouldNavigate] = useState(false);
   const [todos, setTodos] = useState<Todo[]>([]);
 
   const fetchData = async () => {
@@ -39,8 +43,57 @@ function App() {
   };
 
   useEffect(() => {
-    fetchData();
+    const refresh = async () => {
+      try {
+        await refreshToken();
+        const res: Todo[] = await get();
+        setTodos(res);
+      } catch (err) {
+        if (
+          err &&
+          typeof err === "object" &&
+          "status" in err &&
+          "message" in err
+        ) {
+          if (err.status === 401) {
+            setShouldNavigate(true);
+          } else {
+            if (typeof err.message === "string") {
+              toast.error(err.message);
+            }
+          }
+        }
+      }
+    };
+
+    const fetchTodos = async () => {
+      try {
+        const res: Todo[] = await get();
+        setTodos(res);
+      } catch (err) {
+        if (
+          err &&
+          typeof err === "object" &&
+          "status" in err &&
+          "message" in err
+        ) {
+          if (err.status === 401) {
+            refresh();
+          } else {
+            if (typeof err.message === "string") {
+              toast.error(err.message);
+            }
+          }
+        }
+      }
+    };
+
+    fetchTodos();
   }, []);
+
+  if (shouldNavigate) {
+    return <Navigate to="/signin" state={{ from: location }} replace />;
+  }
 
   if (todos.length === 0) {
     return (
