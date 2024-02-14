@@ -111,10 +111,10 @@ func DeleteTodo(objectID primitive.ObjectID) error {
 	return nil
 }
 
-func ImportantTodo() (*[]Todo, error) {
+func ImportantTodo(userID primitive.ObjectID) (*[]Todo, error) {
 	coll := common.GetDBCollection("todo")
 
-	cursor, err := coll.Find(context.Background(), bson.M{"important": true})
+	cursor, err := coll.Find(context.Background(), bson.M{"userId": userID, "important": true})
 	if err != nil {
 		return nil, err
 	}
@@ -132,10 +132,10 @@ func ImportantTodo() (*[]Todo, error) {
 	return &todos, nil
 }
 
-func CompletedTodo() (*[]Todo, error) {
+func CompletedTodo(userID primitive.ObjectID) (*[]Todo, error) {
 	coll := common.GetDBCollection("todo")
 
-	cursor, err := coll.Find(context.Background(), bson.M{"completed": true})
+	cursor, err := coll.Find(context.Background(), bson.M{"userId": userID, "completed": true})
 	if err != nil {
 		return nil, err
 	}
@@ -153,10 +153,10 @@ func CompletedTodo() (*[]Todo, error) {
 	return &todos, nil
 }
 
-func InCompletedTodo() (*[]Todo, error) {
+func InCompletedTodo(userID primitive.ObjectID) (*[]Todo, error) {
 	coll := common.GetDBCollection("todo")
 
-	cursor, err := coll.Find(context.Background(), bson.M{"completed": false})
+	cursor, err := coll.Find(context.Background(), bson.M{"userId": userID, "completed": false})
 	if err != nil {
 		return nil, err
 	}
@@ -174,13 +174,13 @@ func InCompletedTodo() (*[]Todo, error) {
 	return &todos, nil
 }
 
-func TodayTask() (*[]Todo, error) {
+func TodayTask(userID primitive.ObjectID) (*[]Todo, error) {
 	coll := common.GetDBCollection("todo")
 
 	today := time.Now()
 	dateStr := today.Format("2006-01-02")
 
-	cursor, err := coll.Find(context.Background(), bson.M{"date": dateStr})
+	cursor, err := coll.Find(context.Background(), bson.M{"userId": userID, "date": dateStr})
 	if err != nil {
 		return nil, err
 	}
