@@ -5,6 +5,7 @@ import Github from "../../assets/github.svg";
 import Facebook from "../../assets/facebook.svg";
 import { ChangeEvent, useState } from "react";
 import { toast } from "react-toastify";
+import { useAuth } from "../../hooks/useAuth";
 
 const oAuths = [
   { text: "Google", comp: Google },
@@ -26,6 +27,7 @@ const initialState: State = {
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
   const [user, setUser] = useState<State>(initialState);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -38,26 +40,24 @@ const SignUp = () => {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    await fetch("http://localhost:8080/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    })
-      .then(async (res: Response) => {
-        const data = await res.json();
-        if (res.ok) {
-          setUser(initialState);
-          //   toast.success(data.message);
-          navigate("/");
-        } else {
-          toast.error(data.message);
+    try {
+      await auth.signUp(user);
+      setUser(initialState);
+      navigate("/");
+    } catch (err) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "status" in err &&
+        "message" in err
+      ) {
+        if (typeof err.message === "string") {
+          toast.error(err.message);
         }
-      })
-      .catch(() => {
-        toast.error("Failed to Sign Up");
-      });
+      } else {
+        toast.error("Failed to sign up");
+      }
+    }
   };
 
   return (

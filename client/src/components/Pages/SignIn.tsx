@@ -39,28 +39,24 @@ const SignIn = () => {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    await fetch("http://localhost:8080/signin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(user),
-    })
-      .then(async (res: Response) => {
-        const data = await res.json();
-        if (res.ok) {
-          setUser(initialState);
-          localStorage.setItem("access", data.token);
-          auth.login();
-          navigate("/");
-        } else {
-          toast.error(data.message);
+    try {
+      await auth.login(user);
+      setUser(initialState);
+      navigate("/");
+    } catch (err) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "status" in err &&
+        "message" in err
+      ) {
+        if (typeof err.message === "string") {
+          toast.error(err.message);
         }
-      })
-      .catch(() => {
-        toast.error("Failed to Sign in.");
-      });
+      } else {
+        toast.error("Failed to login");
+      }
+    }
   };
 
   return (
