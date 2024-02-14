@@ -38,10 +38,14 @@ func (u *User) Save() error {
 
 	u.Password = hashedPassword
 
-	_, err = coll.InsertOne(context.Background(), u)
+	result, err := coll.InsertOne(context.Background(), u)
 	if err != nil {
 		return err
 	}
+
+	// update the userID from this ObjectID("00000000000000000000000")
+	u.ID = result.InsertedID.(primitive.ObjectID)
+
 	return nil
 }
 
