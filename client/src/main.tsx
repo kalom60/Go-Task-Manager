@@ -7,14 +7,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./components/Navbar/Navbar.tsx";
-import Important from "./components/Pages/Important.tsx";
-import Completed from "./components/Pages/Completed.tsx";
-import Wait from "./components/Pages/Wait.tsx";
-import Today from "./components/Pages/Today.tsx";
 import SignUp from "./components/Pages/SignUp.tsx";
 import SignIn from "./components/Pages/SignIn.tsx";
 import { PrivateRoute } from "./auth/PrivateRoute.tsx";
 import AuthProvider from "./store/AuthProvider.tsx";
+import TodoProvider from "./store/TodoProvider.tsx";
 
 const router = createBrowserRouter([
   {
@@ -29,10 +26,10 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <PrivateRoute>
-        <>
+        <TodoProvider>
           <Navbar />
-          <App />
-        </>
+          <App link="" />
+        </TodoProvider>
       </PrivateRoute>
     ),
   },
@@ -40,10 +37,10 @@ const router = createBrowserRouter([
     path: "/important",
     element: (
       <PrivateRoute>
-        <>
+        <TodoProvider>
           <Navbar />
-          <Important />
-        </>
+          <App link="important" />
+        </TodoProvider>
       </PrivateRoute>
     ),
   },
@@ -51,10 +48,10 @@ const router = createBrowserRouter([
     path: "/completed",
     element: (
       <PrivateRoute>
-        <>
+        <TodoProvider>
           <Navbar />
-          <Completed />
-        </>
+          <App link="completed" />
+        </TodoProvider>
       </PrivateRoute>
     ),
   },
@@ -62,10 +59,10 @@ const router = createBrowserRouter([
     path: "/waiting",
     element: (
       <PrivateRoute>
-        <>
+        <TodoProvider>
           <Navbar />
-          <Wait />
-        </>
+          <App link="waiting" />
+        </TodoProvider>
       </PrivateRoute>
     ),
   },
@@ -73,10 +70,10 @@ const router = createBrowserRouter([
     path: "/today",
     element: (
       <PrivateRoute>
-        <>
+        <TodoProvider>
           <Navbar />
-          <Today />
-        </>
+          <App link="today" />
+        </TodoProvider>
       </PrivateRoute>
     ),
   },
@@ -88,5 +85,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <RouterProvider router={router} />
       <ToastContainer position="top-center" autoClose={3000} />
     </AuthProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
