@@ -33,7 +33,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	token, err := utils.GenerateToken(newUser.Email, newUser.ID.String(), time.Now().Add(time.Minute*15))
+	token, err := utils.GenerateToken(newUser.Email, newUser.ID.Hex(), time.Now().Add(time.Minute*15))
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, "message", "Failed to login. Please try again later.")
 		return
@@ -92,6 +92,12 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 	utils.SetCookie(w, "refresh_token", refresh_token, time.Now().Add(time.Hour*24))
 
 	writeJSON(w, http.StatusOK, "token", token)
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	utils.ClearCookie(w, "refresh_token")
+
+	writeJSON(w, http.StatusOK, "message", "logged out successfully!")
 }
 
 func refreshToken(w http.ResponseWriter, r *http.Request) {
