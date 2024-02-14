@@ -1,8 +1,10 @@
 import { createContext } from "react";
+import { LoginInfo } from "./AuthProvider";
 
 type AuthContextProps = {
   isLoggedIn: boolean;
-  login: () => void;
+  signUp: (body: LoginInfo) => void;
+  login: (body: LoginInfo) => void;
   logout: () => void;
 };
 
