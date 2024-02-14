@@ -4,11 +4,7 @@ import { useState } from "react";
 import Input from "./Input";
 import { Plus } from "react-feather";
 
-interface Props {
-  dataFetch: () => void;
-}
-
-const AddButton: React.FC<Props> = ({ dataFetch }) => {
+const AddButton: React.FC = () => {
   const [isModalActive, setIsModalActive] = useState(false);
 
   const toggleModal = () => {
@@ -27,7 +23,7 @@ const AddButton: React.FC<Props> = ({ dataFetch }) => {
       <div className={`modal ${isModalActive ? "is-active" : ""}`}>
         <div className="modal-background" onClick={toggleModal}></div>
         <div className="modal-content">
-          <Input onFetchData={dataFetch} onToggleModal={toggleModal} />
+          <Input onToggleModal={toggleModal} />
         </div>
         <button
           className="modal-close is-large"
