@@ -1,14 +1,26 @@
 import { Home, List, CheckCircle, MinusCircle, Calendar } from "react-feather";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import TaskLogo from "../../assets/booking-reservation-icon.png";
 import "../Custom-CSS.css";
 import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const auth = useAuth();
   const [isNavbarActive, setNavbarActive] = useState(false);
 
   const toggleNavbar = () => {
     setNavbarActive(!isNavbarActive);
+  };
+
+  const handleLogout = async () => {
+    try {
+      auth.logout();
+      navigate("/signin");
+    } catch (err) {
+      navigate("/signin");
+    }
   };
 
   return (
@@ -80,10 +92,14 @@ const Navbar = () => {
           <div className="navbar-end">
             <div className="navbar-item">
               <div className="buttons">
+                {/*
                 <a className="button is-primary">
-                  <strong>Sign up</strong>
+                  <strong>Log out</strong>
                 </a>
-                <a className="button is-light">Log in</a>
+                */}
+                <a className="button is-light" onClick={handleLogout}>
+                  Log out
+                </a>
               </div>
             </div>
           </div>
