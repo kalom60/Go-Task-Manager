@@ -78,6 +78,7 @@ func getTodos(w http.ResponseWriter, r *http.Request) {
 	userObjID, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		writeJSON(w, http.StatusBadRequest, "message", "Invalid User ID.")
+		return
 	}
 
 	todos, err := models.GetTodos(userObjID)
@@ -180,7 +181,18 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func importantTodo(w http.ResponseWriter, r *http.Request) {
-	todos, err := models.ImportantTodo()
+	userID, ok := r.Context().Value(middlewares.UserIDKey).(string)
+	if !ok {
+		writeJSON(w, http.StatusUnauthorized, "meesage", "Please login.")
+		return
+	}
+
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid User ID.")
+	}
+
+	todos, err := models.ImportantTodo(userObjID)
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
@@ -190,7 +202,18 @@ func importantTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func completedTodo(w http.ResponseWriter, r *http.Request) {
-	todos, err := models.CompletedTodo()
+	userID, ok := r.Context().Value(middlewares.UserIDKey).(string)
+	if !ok {
+		writeJSON(w, http.StatusUnauthorized, "meesage", "Please login.")
+		return
+	}
+
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid User ID.")
+	}
+
+	todos, err := models.CompletedTodo(userObjID)
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
@@ -200,7 +223,18 @@ func completedTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func incompletedTodo(w http.ResponseWriter, r *http.Request) {
-	todos, err := models.InCompletedTodo()
+	userID, ok := r.Context().Value(middlewares.UserIDKey).(string)
+	if !ok {
+		writeJSON(w, http.StatusUnauthorized, "meesage", "Please login.")
+		return
+	}
+
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid User ID.")
+	}
+
+	todos, err := models.InCompletedTodo(userObjID)
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
@@ -210,7 +244,18 @@ func incompletedTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func todayTask(w http.ResponseWriter, r *http.Request) {
-	tasks, err := models.TodayTask()
+	userID, ok := r.Context().Value(middlewares.UserIDKey).(string)
+	if !ok {
+		writeJSON(w, http.StatusUnauthorized, "meesage", "Please login.")
+		return
+	}
+
+	userObjID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, "message", "Invalid User ID.")
+	}
+
+	tasks, err := models.TodayTask(userObjID)
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, "message", "Something went wrong. Please try again later.")
 		return
