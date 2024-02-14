@@ -44,7 +44,7 @@ const Page: React.FC<Props> = ({ link }) => {
 
   return (
     <div>
-      <Todos data={todo.todos} />
+      <Todos />
       <AddButton />
     </div>
   );
