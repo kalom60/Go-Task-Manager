@@ -2,30 +2,33 @@ import React, { ChangeEvent, useState } from "react";
 import { toast } from "react-toastify";
 import { Plus } from "react-feather";
 import "./Custom-CSS.css";
+import { useTodo } from "../hooks/useTodo";
+import { useLocation } from "react-router-dom";
 
 interface TodoState {
-  todo: string;
-  description: string;
-  date: string;
-  completed: boolean;
-  important: boolean;
+  Todo: string;
+  Description: string;
+  Date: string;
+  Completed: boolean;
+  Important: boolean;
 }
 
 interface Props {
-  onFetchData: () => void;
   onToggleModal: () => void;
 }
 
 const intialState = {
-  todo: "",
-  description: "",
-  date: "",
-  completed: false,
-  important: false,
+  Todo: "",
+  Description: "",
+  Date: "",
+  Completed: false,
+  Important: false,
 };
 
-const Input: React.FC<Props> = ({ onFetchData, onToggleModal }) => {
+const Input: React.FC<Props> = ({ onToggleModal }) => {
+  const todoHook = useTodo();
   const [todo, setTodo] = useState<TodoState>(intialState);
+  const { pathname } = useLocation();
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
@@ -46,27 +49,26 @@ const Input: React.FC<Props> = ({ onFetchData, onToggleModal }) => {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    await fetch("http://localhost:8080/todo", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(todo),
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (res.ok) {
-          setTodo(intialState);
-          onFetchData();
-          onToggleModal();
-          toast.success(data.message);
-        } else {
-          toast.error(data.message);
+    try {
+      await todoHook.postTodo(todo);
+      await todoHook.getTodos(pathname);
+      onToggleModal();
+      setTodo(intialState);
+      toast.success("Todo Successfully Created!");
+    } catch (err) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "status" in err &&
+        "message" in err
+      ) {
+        if (typeof err.message === "string") {
+          toast.error(err.message);
         }
-      })
-      .catch(() => {
-        toast.error("Failed to create task");
-      });
+      } else {
+        toast.error("Failed to completed todo");
+      }
+    }
   };
 
   return (
@@ -80,8 +82,8 @@ const Input: React.FC<Props> = ({ onFetchData, onToggleModal }) => {
                 type="text"
                 className="input"
                 placeholder="e.g. wash dishes"
-                name="todo"
-                value={todo.todo}
+                name="Todo"
+                value={todo.Todo}
                 onChange={handleChange}
                 required
               />
@@ -93,8 +95,8 @@ const Input: React.FC<Props> = ({ onFetchData, onToggleModal }) => {
               <textarea
                 className="textarea"
                 placeholder="e.g. wash dishes from the Holiday event"
-                name="description"
-                value={todo.description}
+                name="Description"
+                value={todo.Description}
                 onChange={handleChange}
                 required
               />
@@ -107,8 +109,8 @@ const Input: React.FC<Props> = ({ onFetchData, onToggleModal }) => {
                 type="date"
                 className="input"
                 placeholder="e.g. wash dishes"
-                name="date"
-                value={todo.date}
+                name="Date"
+                value={todo.Date}
                 onChange={handleChange}
                 required
               />
@@ -120,8 +122,8 @@ const Input: React.FC<Props> = ({ onFetchData, onToggleModal }) => {
                 <label className="label">Toggle Completed</label>
                 <input
                   type="checkbox"
-                  name="completed"
-                  checked={todo.completed}
+                  name="Completed"
+                  checked={todo.Completed}
                   onChange={handleChange}
                 />
               </label>
@@ -133,8 +135,8 @@ const Input: React.FC<Props> = ({ onFetchData, onToggleModal }) => {
                 <label className="label">Toggle Important</label>
                 <input
                   type="checkbox"
-                  name="important"
-                  checked={todo.important}
+                  name="Important"
+                  checked={todo.Important}
                   onChange={handleChange}
                 />
               </label>

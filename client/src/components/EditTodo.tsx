@@ -2,9 +2,12 @@ import React, { ChangeEvent, useState } from "react";
 import { toast } from "react-toastify";
 import { Edit3 } from "react-feather";
 import "./Custom-CSS.css";
+import { useTodo } from "../hooks/useTodo";
+import { useLocation } from "react-router-dom";
 
-interface TodoState {
-  ID: number | null;
+export interface TodoState {
+  ID: number;
+  UserID: number;
   Todo: string;
   Description: string;
   Date: string;
@@ -15,24 +18,16 @@ interface TodoState {
 interface Props {
   flag?: boolean;
   data: TodoState;
-  onFetchData: () => void;
   onToggleModal: () => void;
 }
 
-const intialState = {
-  ID: null,
-  Todo: "",
-  Description: "",
-  Date: "",
-  Completed: false,
-  Important: false,
-};
-
-const EditTodo: React.FC<Props> = ({ data, onFetchData, onToggleModal }) => {
+const EditTodo: React.FC<Props> = ({ data, onToggleModal }) => {
+  const todoHook = useTodo();
   const [todo, setTodo] = useState<TodoState>(data);
+  const { pathname } = useLocation();
 
   const handleChange = (
-    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
   ) => {
     if ((event.target as HTMLInputElement).type === "checkbox") {
       setTodo({
@@ -50,27 +45,25 @@ const EditTodo: React.FC<Props> = ({ data, onFetchData, onToggleModal }) => {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    await fetch(`http://localhost:8080/todo/${todo.ID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(todo),
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (res.ok) {
-          setTodo(intialState);
-          onFetchData();
-          onToggleModal();
-          toast.success(data.message);
-        } else {
-          toast.error(data.message);
+    try {
+      await todoHook.editTodo(todo.ID, todo);
+      await todoHook.getTodos(pathname);
+      onToggleModal();
+      toast.success("Todo Successfully Updated!");
+    } catch (err) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "status" in err &&
+        "message" in err
+      ) {
+        if (typeof err.message === "string") {
+          toast.error(err.message);
         }
-      })
-      .catch(() => {
-        toast.error("Failed to edit task");
-      });
+      } else {
+        toast.error("Failed to update todo");
+      }
+    }
   };
 
   return (

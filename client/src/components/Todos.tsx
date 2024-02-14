@@ -4,16 +4,15 @@ import { Trash, Edit } from "react-feather";
 import "./Custom-CSS.css";
 import { toast } from "react-toastify";
 import EditTodo from "./EditTodo";
+import { useTodo } from "../hooks/useTodo";
+import { useLocation } from "react-router-dom";
 
-interface Props {
-  data: Todo[];
-  onFetchData: () => void;
-}
-
-const Todos: React.FC<Props> = ({ data, onFetchData }) => {
+const Todos: React.FC = () => {
   const [edit, setIsEdit] = useState(0);
   const [flag, setFlag] = useState(false);
   const [isModalActive, setIsModalActive] = useState(false);
+  const todo = useTodo();
+  const { pathname } = useLocation();
 
   const toggleModal = () => {
     setIsModalActive(!isModalActive);
@@ -24,43 +23,55 @@ const Todos: React.FC<Props> = ({ data, onFetchData }) => {
 
   const handleDelete = async (
     id: number,
-    event: { stopPropagation: () => void } | undefined
+    event: { stopPropagation: () => void } | undefined,
   ) => {
     event?.stopPropagation();
-    await fetch(`http://localhost:8080/todo/${id}`, {
-      method: "DELETE",
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (res.ok) {
-          onFetchData();
-          toast.success(data.message);
-        } else {
-          toast.error(data.message);
+
+    try {
+      await todo.deleteTodo(id);
+      await todo.getTodos(pathname);
+      toast.success("Todo Successfully Deleted!");
+    } catch (err) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "status" in err &&
+        "message" in err
+      ) {
+        if (typeof err.message === "string") {
+          toast.error(err.message);
         }
-      })
-      .catch(() => {
-        toast.error("Failed to delete task");
-      });
+      } else {
+        toast.error("Failed to delete todo");
+      }
+    }
   };
 
   const handleComplete = async (
     id: number,
     status: boolean,
-    event: { stopPropagation: () => void } | undefined
+    event: { stopPropagation: () => void } | undefined,
   ) => {
     event?.stopPropagation();
-    await fetch(`http://localhost:8080/todo/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ completed: status }),
-    }).then(async (res) => {
-      const data = await res.json();
-      onFetchData();
-      toast(data.message);
-    });
+
+    try {
+      console.log("IN Toogle");
+      await todo.toggleCompletion(id, { Completed: status });
+      await todo.getTodos(pathname);
+    } catch (err) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "status" in err &&
+        "message" in err
+      ) {
+        if (typeof err.message === "string") {
+          toast.error(err.message);
+        }
+      } else {
+        toast.error("Failed to completed todo");
+      }
+    }
   };
 
   return (
@@ -72,8 +83,7 @@ const Todos: React.FC<Props> = ({ data, onFetchData }) => {
           <div className="modal-content">
             <EditTodo
               flag={flag}
-              data={data[edit]}
-              onFetchData={onFetchData}
+              data={todo.todos[edit]}
               onToggleModal={toggleModal}
             />
           </div>
@@ -85,7 +95,7 @@ const Todos: React.FC<Props> = ({ data, onFetchData }) => {
         </div>
       ) : (
         <div className="columns container is-multiline mx-auto">
-          {data.map((todo: Todo, index: number) => (
+          {todo.todos.map((todo: Todo, index: number) => (
             <div
               className="column is-4-desktop is-6-tablet is-12-mobile"
               key={todo.ID}
