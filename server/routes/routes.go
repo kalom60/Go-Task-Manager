@@ -11,6 +11,7 @@ func RegisterRoutes(r *mux.Router) {
 	// routes without middleware
 	r.HandleFunc("/signup", createUser).Methods("POST")
 	r.HandleFunc("/signin", logIn).Methods("POST")
+	r.Handle("/logout", middlewares.AuthenticateRefreshToken(http.HandlerFunc(logout))).Methods("POST")
 	r.Handle("/refreshToken", middlewares.AuthenticateRefreshToken(http.HandlerFunc(refreshToken))).Methods("POST")
 
 	// create a subrouter
