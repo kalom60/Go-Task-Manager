@@ -16,12 +16,11 @@ export interface TodoState {
 }
 
 interface Props {
-  flag?: boolean;
   data: TodoState;
-  onToggleModal: () => void;
+  onClose: () => void;
 }
 
-const EditTodo: React.FC<Props> = ({ data, onToggleModal }) => {
+const EditTodo: React.FC<Props> = ({ data, onClose }) => {
   const todoHook = useTodo();
   const [todo, setTodo] = useState<TodoState>(data);
   const { pathname } = useLocation();
@@ -48,7 +47,7 @@ const EditTodo: React.FC<Props> = ({ data, onToggleModal }) => {
     try {
       await todoHook.editTodo(todo.ID, todo);
       await todoHook.getTodos(pathname);
-      onToggleModal();
+      onClose();
       toast.success("Todo Successfully Updated!");
     } catch (err) {
       if (

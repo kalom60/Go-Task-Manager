@@ -14,7 +14,7 @@ interface TodoState {
 }
 
 interface Props {
-  onToggleModal: () => void;
+  onClose: () => void;
 }
 
 const intialState = {
@@ -25,13 +25,13 @@ const intialState = {
   Important: false,
 };
 
-const Input: React.FC<Props> = ({ onToggleModal }) => {
+const Input: React.FC<Props> = ({ onClose }) => {
   const todoHook = useTodo();
   const [todo, setTodo] = useState<TodoState>(intialState);
   const { pathname } = useLocation();
 
   const handleChange = (
-    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
   ) => {
     if ((event.target as HTMLInputElement).type === "checkbox") {
       setTodo({
@@ -52,7 +52,7 @@ const Input: React.FC<Props> = ({ onToggleModal }) => {
     try {
       await todoHook.postTodo(todo);
       await todoHook.getTodos(pathname);
-      onToggleModal();
+      onClose();
       setTodo(intialState);
       toast.success("Todo Successfully Created!");
     } catch (err) {
