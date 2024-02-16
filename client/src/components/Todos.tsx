@@ -6,19 +6,20 @@ import { toast } from "react-toastify";
 import EditTodo from "./EditTodo";
 import { useTodo } from "../hooks/useTodo";
 import { useLocation } from "react-router-dom";
+import Modal from "./UI/Modal";
 
 const Todos: React.FC = () => {
   const [edit, setIsEdit] = useState(0);
-  const [flag, setFlag] = useState(false);
-  const [isModalActive, setIsModalActive] = useState(false);
+  const [modalIsShown, setModalIsShown] = React.useState(false);
   const todo = useTodo();
   const { pathname } = useLocation();
 
-  const toggleModal = () => {
-    setIsModalActive(!isModalActive);
-    if (flag) {
-      setFlag(false);
-    }
+  const showModalHandler = () => {
+    setModalIsShown(true);
+  };
+
+  const hideModalHandler = () => {
+    setModalIsShown(false);
   };
 
   const handleDelete = async (
@@ -55,7 +56,6 @@ const Todos: React.FC = () => {
     event?.stopPropagation();
 
     try {
-      console.log("IN Toogle");
       await todo.toggleCompletion(id, { Completed: status });
       await todo.getTodos(pathname);
     } catch (err) {
@@ -77,96 +77,81 @@ const Todos: React.FC = () => {
   return (
     // <Box>
     <>
-      {isModalActive ? (
-        <div className={`modal ${isModalActive ? "is-active" : ""}`}>
-          <div className="modal-background" onClick={toggleModal}></div>
-          <div className="modal-content">
-            <EditTodo
-              flag={flag}
-              data={todo.todos[edit]}
-              onToggleModal={toggleModal}
-            />
-          </div>
-          <button
-            className="modal-close is-large"
-            onClick={toggleModal}
-            aria-label="close"
-          ></button>
-        </div>
-      ) : (
-        <div className="columns container is-multiline mx-auto">
-          {todo.todos.map((todo: Todo, index: number) => (
+      {modalIsShown && (
+        <Modal onClose={hideModalHandler}>
+          <EditTodo data={todo.todos[edit]} onClose={hideModalHandler} />
+        </Modal>
+      )}
+      <div className="columns container is-multiline mx-auto">
+        {todo.todos.map((todo: Todo, index: number) => (
+          <div
+            className="column is-4-desktop is-6-tablet is-12-mobile"
+            key={todo.ID}
+          >
             <div
-              className="column is-4-desktop is-6-tablet is-12-mobile"
-              key={todo.ID}
+              className="box custom-box is-flex is-flex-direction-column is-justify-content-space-between"
+              onClick={() => {
+                setIsEdit(index);
+                showModalHandler();
+              }}
             >
-              <div
-                className="box custom-box is-flex is-flex-direction-column is-justify-content-space-between"
-                onClick={() => {
-                  setIsEdit(index);
-                  setFlag(true);
-                  toggleModal();
-                }}
-              >
-                <div>
-                  <h1 className="is-size-4-mobile has-text-weight-bold is-family-code">
-                    {todo.Completed ? <s>{todo.Todo}</s> : todo.Todo}
-                  </h1>
-                  <div className="description is-family-code">
-                    {todo.Description}
-                  </div>
+              <div>
+                <h1 className="is-size-4-mobile has-text-weight-bold is-family-code">
+                  {todo.Completed ? <s>{todo.Todo}</s> : todo.Todo}
+                </h1>
+                <div className="description is-family-code">
+                  {todo.Description}
                 </div>
-                <div>
-                  <div className="is-size-6-mobile is-family-code mb-2">
-                    {todo.Date}
-                  </div>
-                  <div className="buttons is-flex-tablet is-justify-content-space-between is-flex-direction-column-tablet is-gapless">
-                    {todo.Completed ? (
-                      <button
-                        className="button is-success is-rounded is-light"
-                        onClick={(e) =>
-                          handleComplete(todo.ID, !todo.Completed, e)
-                        }
-                      >
-                        Completed
-                      </button>
-                    ) : (
-                      <button
-                        className="button is-danger is-rounded is-light"
-                        onClick={(e) =>
-                          handleComplete(todo.ID, !todo.Completed, e)
-                        }
-                      >
-                        Incomplete
-                      </button>
-                    )}
+              </div>
+              <div>
+                <div className="is-size-6-mobile is-family-code mb-2">
+                  {todo.Date}
+                </div>
+                <div className="buttons is-flex-tablet is-justify-content-space-between is-flex-direction-column-tablet is-gapless">
+                  {todo.Completed ? (
+                    <button
+                      className="button is-success is-rounded is-light"
+                      onClick={(e) =>
+                        handleComplete(todo.ID, !todo.Completed, e)
+                      }
+                    >
+                      Completed
+                    </button>
+                  ) : (
+                    <button
+                      className="button is-danger is-rounded is-light"
+                      onClick={(e) =>
+                        handleComplete(todo.ID, !todo.Completed, e)
+                      }
+                    >
+                      Incomplete
+                    </button>
+                  )}
 
-                    <div className="is-flex is-align-items-center">
-                      <button
-                        className="button is-white custom-hover-off is-small"
-                        onClick={() => {
-                          setIsEdit(index);
-                          toggleModal();
-                        }}
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button
-                        className="button is-white custom-hover-off is-small"
-                        onClick={(e) => handleDelete(todo.ID, e)}
-                      >
-                        <Trash color="red" size={18} />
-                      </button>
-                    </div>
+                  <div className="is-flex is-align-items-center">
+                    <button
+                      className="button is-white custom-hover-off is-small"
+                      onClick={() => {
+                        setIsEdit(index);
+                        showModalHandler();
+                      }}
+                    >
+                      <Edit size={18} />
+                    </button>
+                    <button
+                      className="button is-white custom-hover-off is-small"
+                      onClick={(e) => handleDelete(todo.ID, e)}
+                    >
+                      <Trash color="red" size={18} />
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </>
-    // </Box>
   );
 };
 
