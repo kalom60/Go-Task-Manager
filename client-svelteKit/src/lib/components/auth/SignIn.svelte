@@ -5,7 +5,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 </script>
 
-<Card.Root class="w-[370px]">
+<Card.Root class="w-[450px]">
 	<Card.Header>
 		<Card.Title>Sign In</Card.Title>
 		<Card.Description
@@ -15,7 +15,7 @@
 	</Card.Header>
 	<Card.Content>
 		<form>
-			<div class="grid w-full items-center gap-4">
+			<div class="grid w-full items-center gap-6">
 				<div class="flex flex-col space-y-1.5">
 					<Label for="email">Email</Label>
 					<Input id="email" />
